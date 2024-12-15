@@ -14,9 +14,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /*Classe permettant d'afficher les différents éléments de la page d'accueil 
@@ -125,7 +125,7 @@ public class MainView extends JFrame {
     // Configuration des pages
     private void setupPages() {
         ///--- Page d'accueil (HomePage) ---///
-        homePage = new JPanel();
+        JPanel homePage = new JPanel();
         homePage.setLayout(new BoxLayout(homePage, BoxLayout.Y_AXIS)); 
 
         // Création des sections
@@ -143,16 +143,14 @@ public class MainView extends JFrame {
         ///--- Page de la collection (CollectionPage) ---///
         collectionPage = new JPanel(new BorderLayout());
         collectionPage.add(new JLabel("Welcome to My Collection Page!"), BorderLayout.CENTER);
-
-        // Ajouter les pages au panel avec CardLayout
-        cardPanel.add(homePage, "HomePage");
-        cardPanel.add(collectionPage, "MyCollectionPage");
-
+        
         ///--- Page des résultats de recherche (SearchResultsPage) ---///
         searchResultsPage = new JPanel(new BorderLayout());
         searchResultsPage.add(new JLabel("Search Results"), BorderLayout.NORTH);
 
-        // Ajouter la page des résultats de recherche
+        // Ajouter les pages au panel avec CardLayout
+        cardPanel.add(homePage, "HomePage");
+        cardPanel.add(collectionPage, "MyCollectionPage");
         cardPanel.add(searchResultsPage, "SearchResultsPage");
 
         // Afficher la HomePage par défaut
@@ -195,10 +193,32 @@ public class MainView extends JFrame {
         // Supprimer les anciens résultats
         searchResultsPage.removeAll(); 
 
-        // Ajouter les nouveaux résultats
-        JTextArea resultsArea = new JTextArea(results);
-        resultsArea.setEditable(false);
-        searchResultsPage.add(new JScrollPane(resultsArea), BorderLayout.CENTER);
+        // Divise la recherche en lignes distinctes
+        String[] resultLines = results.split("\n");
+
+        // Create a panel to hold the results
+        JPanel resultsPanel = new JPanel();
+        resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+
+        // Add each result line with a button
+        for (String line : resultLines) {
+            JPanel resultLinePanel = new JPanel(new BorderLayout());
+            JLabel resultLabel = new JLabel(line);
+            JButton actionButton = new JButton("Action");
+
+            // Add action listener to the button
+            actionButton.addActionListener(e -> {
+                // Show a message dialog with the line text
+                JOptionPane.showMessageDialog(this, "Button clicked for: " + line);
+            });
+
+            resultLinePanel.add(resultLabel, BorderLayout.CENTER);
+            resultLinePanel.add(actionButton, BorderLayout.EAST);
+            resultsPanel.add(resultLinePanel);
+        }
+
+        // Ajouter une barre de défilement
+        searchResultsPage.add(new JScrollPane(resultsPanel), BorderLayout.CENTER);
 
         // Rafraîchir l'affichage
         searchResultsPage.revalidate();

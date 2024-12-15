@@ -45,7 +45,6 @@ public class Api {
             System.out.println(results);
 
             if (results.length() > 0) {
-                resultBuilder.append("Issues featuring character: ").append(characterName).append("\n\n");
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject issue = results.getJSONObject(i);
                     System.out.println(issue);
@@ -100,7 +99,6 @@ public class Api {
             JSONArray results = jsonResponse.getJSONArray("results");
 
             if (results.length() > 0) {
-                resultBuilder.append("Issues with title: ").append(title).append("\n\n");
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject issue = results.getJSONObject(i);
                     String issueTitle = issue.optString("name", "Unknown Comic");
