@@ -1,0 +1,64 @@
+package Controller;
+
+import Model.Api;
+import Model.SearchModel;
+import View.MainView;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MainController {
+    private SearchModel model;
+    private MainView view;
+    private Api api;
+
+    public MainController(SearchModel model, MainView view) {
+        this.model = model;
+        this.view = view;
+        this.api = new Api(); // Create an instance of Api
+
+        // Add listeners for the search and navigation buttons
+        this.view.getSearchButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSearch();
+            }
+        });
+
+        this.view.getHomeButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.showPage("HomePage");
+            }
+        });
+
+        this.view.getCollectionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.showPage("MyCollectionPage");
+            }
+        });
+    }
+
+    private void handleSearch() {
+        String searchText = view.getSearchText(); // Get text from search field
+        if (searchText == null || searchText.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(view, "Please enter a search term.", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        model.setSearchText(searchText); // Update model
+
+        // Call the API to search by title
+        try {
+            String result = api.searchComicsByCharacter(searchText);
+
+            // Display the results in a dialog (you can enhance this part to show in the UI)
+            JOptionPane.showMessageDialog(view, result, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view, "Error during API request: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}

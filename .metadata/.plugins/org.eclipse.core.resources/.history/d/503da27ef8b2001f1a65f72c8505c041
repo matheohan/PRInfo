@@ -1,0 +1,55 @@
+package Model;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class Api {
+    private static final String API_BASE_URL = "https://comicvine.gamespot.com/api";
+    private static final String API_KEY = "1a582c946b0b328eea2d5389e530355572e95a27";
+
+    // Méthode pour rechercher directement des issues associées à un personnage
+    public String searchComicsByCharacter(String characterName) throws Exception {
+        StringBuilder resultBuilder = new StringBuilder();
+
+        // Construire l'URL pour rechercher les issues liées à un personnage
+        String url = API_BASE_URL + "/search/?api_key=" + API_KEY +
+                     "&format=json" +
+                     "&query=" + characterName +
+                     "&resources=issue" + // Recherche directement dans les issues
+                     "&limit=20"; // Limiter à 20 résultats
+
+        // Créer le client HTTP et envoyer la requête
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                                         .uri(new URI(url))
+                                         .GET()
+                                         .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JSONObject jsonResponse = new JSONObject(response.body());
+            JSONArray results = jsonResponse.getJSONArray("results");
+
+            if (results.length() > 0) {
+                resultBuilder.append("Issues featuring character: ").append(characterName).append("\n\n");
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject issue = results.getJSONObject(i);
+                    String issueName = issue.optString("name", "Unknown Comic");
+                    String volumeName = issue.getJSONObject("volume").optString("name", "Unknown Volume");
+                    resultBuilder.append(i + 1).append(". ").append(issueName)
+                                 .append(" (Volume: ").append(volumeName).append(")\n");
+                }
+            } else {
+                resultBuilder.append("No issues found featuring the character: ").append(characterName);
+            }
+        } else {
+            throw new Exception("HTTP Error: " + response.statusCode());
+        }
+
+        return resultBuilder.toString();
+    }
+}
