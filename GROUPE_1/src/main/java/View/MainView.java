@@ -1,7 +1,23 @@
 package View;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Image;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /*Classe permettant d'afficher les différents éléments de la page d'accueil 
  * ainsi que la page de collection 
@@ -27,6 +43,7 @@ public class MainView extends JFrame {
     // Pages
     private JPanel homePage;
     private JPanel collectionPage;
+    private JPanel searchResultsPage;
     
     
     private JComboBox<String> searchTypeComboBox; // Déclaration du JComboBox
@@ -101,22 +118,13 @@ public class MainView extends JFrame {
     }
 
     
- 
-    
     public JComboBox<String> getSearchTypeComboBox() {
         return searchTypeComboBox;
     }
 
-
-    
-    
-  
-
-    
-
-    // Configuration des pages (HomePage et MyCollectionPage)
+    // Configuration des pages
     private void setupPages() {
-        // Page d'accueil (HomePage) 
+        ///--- Page d'accueil (HomePage) ---///
         homePage = new JPanel();
         homePage.setLayout(new BoxLayout(homePage, BoxLayout.Y_AXIS)); 
 
@@ -132,13 +140,20 @@ public class MainView extends JFrame {
         homePage.add(Box.createVerticalStrut(20)); // Espace de 20 pixels entre les sections
         homePage.add(section3);
 
-        // Page de la collection (MyCollectionPage)
+        ///--- Page de la collection (CollectionPage) ---///
         collectionPage = new JPanel(new BorderLayout());
         collectionPage.add(new JLabel("Welcome to My Collection Page!"), BorderLayout.CENTER);
 
         // Ajouter les pages au panel avec CardLayout
         cardPanel.add(homePage, "HomePage");
         cardPanel.add(collectionPage, "MyCollectionPage");
+
+        ///--- Page des résultats de recherche (SearchResultsPage) ---///
+        searchResultsPage = new JPanel(new BorderLayout());
+        searchResultsPage.add(new JLabel("Search Results"), BorderLayout.NORTH);
+
+        // Ajouter la page des résultats de recherche
+        cardPanel.add(searchResultsPage, "SearchResultsPage");
 
         // Afficher la HomePage par défaut
         cardLayout.show(cardPanel, "HomePage");
@@ -175,6 +190,21 @@ public class MainView extends JFrame {
     public String getSearchText() {
         return searchField.getText();
     }
+
+    public void updateSearchResults(String results) {
+        // Supprimer les anciens résultats
+        searchResultsPage.removeAll(); 
+
+        // Ajouter les nouveaux résultats
+        JTextArea resultsArea = new JTextArea(results);
+        resultsArea.setEditable(false);
+        searchResultsPage.add(new JScrollPane(resultsArea), BorderLayout.CENTER);
+
+        // Rafraîchir l'affichage
+        searchResultsPage.revalidate();
+        searchResultsPage.repaint();
+    }
+
 
     // Méthode pour changer de page (vue)
     public void showPage(String pageName) {

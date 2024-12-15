@@ -72,13 +72,12 @@ public class Api {
     }
 
 
-
-    public String searchByTitle(String title,int resultLimit) throws Exception {
+    public String searchByTitle(String title, int resultLimit) throws Exception {
         StringBuilder resultBuilder = new StringBuilder();
-
+    
         // Encodage du titre pour les caractères spéciaux et les espaces
-        String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
-
+        String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8.name());
+    
         // Construire l'URL avec le titre encodé
         String url = API_BASE_URL + "/issues/?api_key=" + API_KEY +
                 "&format=json" +
@@ -86,14 +85,15 @@ public class Api {
                 "&limit=" + resultLimit;
         // Log de l'URL (utile pour le débogage)
         System.out.println("Request URL: " + url);
-
+    
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                                          .uri(new URI(url))
                                          .GET()
                                          .build();
-
+    
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
 
         if (response.statusCode() == 200) {
             JSONObject jsonResponse = new JSONObject(response.body());
@@ -121,7 +121,6 @@ public class Api {
     }
 
 
-   
     public static void main(String[] args) {
         Api api = new Api();
         

@@ -62,8 +62,9 @@ public class MainController {
                 result = api.searchByTitle(searchText,20);
             }
 
-            // Afficher les résultats dans un dialogue
-            JOptionPane.showMessageDialog(view, result, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+            // Update the search results page and show it
+            view.updateSearchResults(result);
+            view.showPage("SearchResultsPage");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view, "Error during API request: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
